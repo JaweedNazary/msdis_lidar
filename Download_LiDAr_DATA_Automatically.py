@@ -9,7 +9,7 @@
 
 # In[1]:
 
-
+import numpy
 import os
 import requests
 import json
