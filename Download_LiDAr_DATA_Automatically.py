@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+## This is code is written by Mohammad Jaweed Nazary 
+## All rights are reserved to University of Missouri - Columbia 
+## July 2024 
+
 # ### Lets get the required libraries
 
 # In[1]:
@@ -104,7 +108,7 @@ gdf
 
 # In[40]:
 
-
+# we can check if the we got the right lidar tiles, this generate a html map using folium to show the LiDAR tiles to be downloaded. 
 import folium
 
 
