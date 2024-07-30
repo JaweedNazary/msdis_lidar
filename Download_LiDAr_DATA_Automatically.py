@@ -7,9 +7,22 @@
 
 # ### Lets get the required libraries
 
+
+# In[ ]:
+venv_path = r'C:\Users\mjwd1\env\Scripts'
+
+# Check if the activate script exists
+if os.path.exists(venv_path):
+    print("YES")
+    os.system(venv_path)
+    print("Environment activated successfully")
+else:
+    print("Activate script not found. Please provide the correct path to your virtual environment.")
+
+
 # In[1]:
 
-import numpy
+
 import os
 import requests
 import json
