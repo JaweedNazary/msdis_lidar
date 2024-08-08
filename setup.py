@@ -1,29 +1,22 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 from setuptools import setup, find_packages
 
 setup(
     name='msdis_lidar',
     version='0.1.0',
-    description='Download and manage LiDAR data from MSDIS',
-    author='M. Jaweed Nazary',
-    author_email='jaweedpy@gmail.com',
     packages=find_packages(),
     install_requires=[
         'geopandas',
         'rich',
         'requests',
         'folium',
-        'tabulate'
+        'tabulate',
     ],
-    entry_points={
-        'console_scripts': [
-            'msdis-lidar=msdis_lidar.cli:main',
-        ],
-    },
+    author='M. Jaweed Nazary',
+    description='A Python package for downloading and visualizing LiDAR data from MSDIS',
+    url='https://github.com/yourusername/msdis_lidar',
+    license='MIT',
+    classifiers=[
+        'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: MIT License',
+    ],
 )
-
