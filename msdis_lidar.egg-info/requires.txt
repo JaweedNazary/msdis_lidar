@@ -1,5 +1,0 @@
-geopandas
-rich
-requests
-folium
-tabulate
