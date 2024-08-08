@@ -1,0 +1,16 @@
+Metadata-Version: 2.1
+Name: msdis-lidar
+Version: 0.1
+Summary: A Python package for downloading and visualizing LiDAR data from MSDIS
+Home-page: https://github.com/JaweedNazary/Automatic_LiDAR_Download_from_MSDIS
+Author: M. Jaweed Nazary
+License: MIT
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3.11
+Requires-Python: >=3.10
+License-File: LICENSE
+
+UNKNOWN
+

@@ -26,6 +26,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.11',
     ],
-    python_requires='>=3.10',  # Specify the minimum Python version required
+    python_requires='>=3.6',  # Specify the minimum Python version required
 )
 
