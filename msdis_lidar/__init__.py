@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
+__version__ = '0.1'
 
 # msdis_lidar/msdis_lidar/__init__.py
 from .downloader import LidarDownloader

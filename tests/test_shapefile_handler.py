@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 # msdis_lidar/tests/test_shapefile_handler.py
 import pytest
 from msdis_lidar.shapefile_handler import ShapefileHandler
