@@ -1,9 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
+import json
 import requests
 import geopandas as gpd
 from rich.progress import Progress, TextColumn, BarColumn
