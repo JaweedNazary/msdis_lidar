@@ -25,12 +25,12 @@ class ShapefileHandler(builtins.object):
 
             nodes = len(polygon_coords)
             if nodes > 30: 
-                polygon_coords = self.simplify_polygon(polygon_coords, nodes)
+                polygon_coords = self.simplify_polygon(polygon_coords, nodes, i)
             polygons.append(polygon_coords)
 
         return polygons
 
-    def simplify_polygon(self, polygon_coords, nodes):
+    def simplify_polygon(self, polygon_coords, nodes, i):
         sample_every = [2, 5, 10, 20, 50, 100, 200, 500, 1000]
         while nodes >= 30.0: 
             for sample_no in sample_every:

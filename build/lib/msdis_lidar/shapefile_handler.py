@@ -1,11 +1,6 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 import geopandas as gpd
 from rich.progress import track
+import builtins
 
 class ShapefileHandler(builtins.object):
     def __init__(self, shapefile_path):
