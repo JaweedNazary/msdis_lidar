@@ -50,9 +50,7 @@ class LidarDownloader:
             "outSR": 4326,
             "f": "json"
         }
-        query_url = base_url + "&".join([f"{k}={v}" for k, v in query_params.items()])
-
-        return query_url, query_params
+        return base_url + "&".join([f"{k}={v}" for k, v in query_params.items()])
 
     def _get_fields(self):
         return [
@@ -61,10 +59,10 @@ class LidarDownloader:
             "Shape_Area", "Shape__Area", "Shape__Length"
         ]
 
-    def _process_response(self, response, query_params):
+    def _process_response(self, response):
         data = response.json()
         if 'features' in data and data['features']:
-            export_params = query_params.copy()
+            export_params = self._construct_query_url(data)
             export_params["f"] = "geojson"
             export_url = base_url + "&".join([f"{k}={v}" for k, v in export_params.items()])
             export_response = requests.get(export_url)
