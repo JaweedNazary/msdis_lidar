@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='msdis_lidar',
+    name='Automatic_LiDAR_Download_from_MSDIS',
     version='0.1',
     packages=find_packages(),
     install_requires=[
