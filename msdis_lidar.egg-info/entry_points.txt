@@ -1,2 +1,0 @@
-[console_scripts]
-msdis-lidar = msdis_lidar.cli:main
