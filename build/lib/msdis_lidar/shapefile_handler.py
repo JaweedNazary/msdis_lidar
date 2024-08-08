@@ -7,7 +7,7 @@
 import geopandas as gpd
 from rich.progress import track
 
-class ShapefileHandler(builtins.object):
+class ShapefileHandler:
     def __init__(self, shapefile_path):
         self.gdf = gpd.read_file(shapefile_path)
         self.reprojected_gdf = None
