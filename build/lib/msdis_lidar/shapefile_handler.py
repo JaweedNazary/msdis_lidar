@@ -1,6 +1,8 @@
 import geopandas as gpd
 from rich.progress import track
 import builtins
+from rich import print
+
 
 class ShapefileHandler(builtins.object):
     def __init__(self, shapefile_path):

@@ -2,8 +2,14 @@ import requests
 import json
 import geopandas as gpd
 from rich.progress import Progress, TextColumn, BarColumn
+from rich import print
+
 
 class LidarDownloader:
+
+    ## Written by M. Jaweed Nazary
+    ## University of Missouri-Columbia 
+    ## July 2024
     def __init__(self, base_url):
         self.base_url = base_url
 
