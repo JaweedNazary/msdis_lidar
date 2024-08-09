@@ -12,9 +12,11 @@ class LidarDownloader:
     ## July 2024
     def __init__(self, base_url):
         self.base_url = base_url
+        ## Note: The base URL is the URL of the ArcGIS Feature Service that contains the LiDAR data
 
     def fetch_lidar_download_links(self, polygons):
         # Initialize an empty GeoDataFrame to store the results
+    
         gdf_lidar = gpd.GeoDataFrame()
 
         total_polygons = len(polygons)  # Total number of polygons
