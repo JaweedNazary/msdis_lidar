@@ -1,16 +1,18 @@
-import json
 import requests
+import json
 import geopandas as gpd
 from rich.progress import Progress, TextColumn, BarColumn
-from rich.console import Console
 
 class LidarDownloader:
-    def __init__(self, polygons):
-        self.polygons = polygons
-        self.gdf_lidar = gpd.GeoDataFrame()
+    def __init__(self, base_url):
+        self.base_url = base_url
 
-    def get_download_links(self):
-        total_polygons = len(self.polygons)
+    def fetch_lidar_download_links(self, polygons):
+        # Initialize an empty GeoDataFrame to store the results
+        gdf_lidar = gpd.GeoDataFrame()
+
+        total_polygons = len(polygons)  # Total number of polygons
+
         with Progress(
             TextColumn("[progress.description]{task.description}"),
             BarColumn(),
@@ -19,75 +21,81 @@ class LidarDownloader:
             transient=True,
         ) as progress:
             task = progress.add_task("Fetching LiDAR Download Links", total=total_polygons)
-            for index, poly in enumerate(self.polygons):
+
+            for index, poly in enumerate(polygons):
                 progress.update(task, description=f"Fetching LiDAR Download Links for polygon {index + 1} of {total_polygons}")
-                polygon_string = self._format_polygon_string(poly)
-                query_url = self._construct_query_url(polygon_string)
+
+                # Convert polygon coordinates to a string format required by the ArcGIS API
+                polygon_string = json.dumps({
+                    "rings": [poly],
+                    "spatialReference": {"wkid": 4326}
+                })
+
+
+                # List of fields to include in the query
+                fields = [
+                    "FID",
+                    "OBJECTID",
+                    "Name_1",
+                    "ftp_1",
+                    "Acq_Year_1",
+                    "ftp",
+                    "Project",
+                    "updated_ft",
+                    "Shape_Leng",
+                    "Shape_Area",
+                    "Shape__Area",
+                    "Shape__Length"
+                ]
+                        
+            
+                base_url = "https://services2.arcgis.com/kNS2ppBA4rwAQQZy/ArcGIS/rest/services/MO_LAS_Tiles/FeatureServer/0/query?"
+                
+                # Construct the query URL
+                query_params = {
+                    "geometryType": "esriGeometryPolygon",
+                    "geometry": polygon_string,
+                    "inSR": 4326,
+                    "spatialRel": "esriSpatialRelIntersects",
+                    "outFields": ",".join(fields),
+                    "returnGeometry": "true",
+                    "outSR": 4326,
+                    "f": "json"
+                }
+                query_url = base_url + "&".join([f"{k}={v}" for k, v in query_params.items()])
+
+                # Send GET request
                 response = requests.get(query_url)
+
+                # Check if request was successful
                 if response.status_code == 200:
-                    new_data = self._process_response(response)
-                    if new_data is not None:
-                        self.gdf_lidar = self.gdf_lidar.append(new_data, ignore_index=True)
+                    data = response.json()
+
+                    if 'features' in data and data['features']:
+                        # Prepare a URL for exporting the data to GeoJSON
+                        export_params = query_params.copy()
+                        export_params["f"] = "geojson"
+                        export_url = base_url + "&".join([f"{k}={v}" for k, v in export_params.items()])
+
+                        # Send GET request to export URL
+                        export_response = requests.get(export_url)
+
+                        # Check if export request was successful
+                        if export_response.status_code == 200:
+                            # Load the data into GeoDataFrame
+                            export_data = export_response.json()
+                            new_data = gpd.GeoDataFrame.from_features(export_data['features'])
+
+                            # Append the new data to the existing GeoDataFrame
+                            if not gdf_lidar.empty:
+                                gdf_lidar = gdf_lidar.append(new_data, ignore_index=True)
+                            else:
+                                gdf_lidar = new_data
+                else:
+                    # Handle errors silently
+                    pass
+
                 progress.update(task, advance=1)
-        print(f"Downloaded links for {len(self.gdf_lidar)} LiDAR tiles have been fetched successfully.")
-        return self.gdf_lidar
 
-    def _format_polygon_string(self, polygon):
-        return json.dumps({
-            "rings": [polygon],
-            "spatialReference": {"wkid": 4326}
-        })
-
-    def _construct_query_url(self, polygon_string):
-        base_url = "https://services2.arcgis.com/kNS2ppBA4rwAQQZy/ArcGIS/rest/services/MO_LAS_Tiles/FeatureServer/0/query?"
-        query_params = {
-            "geometryType": "esriGeometryPolygon",
-            "geometry": polygon_string,
-            "inSR": 4326,
-            "spatialRel": "esriSpatialRelIntersects",
-            "outFields": ",".join(self._get_fields()),
-            "returnGeometry": "true",
-            "outSR": 4326,
-            "f": "json"
-        }
-        return base_url + "&".join([f"{k}={v}" for k, v in query_params.items()])
-
-    def _get_fields(self):
-        return [
-            "FID", "OBJECTID", "Name_1", "ftp_1", "Acq_Year_1", 
-            "ftp", "Project", "updated_ft", "Shape_Leng", 
-            "Shape_Area", "Shape__Area", "Shape__Length"
-        ]
-
-    def _process_response(self, response):
-        data = response.json()
-        if 'features' in data and data['features']:
-            export_params = self._construct_query_url(data)
-            export_params["f"] = "geojson"
-            export_url = base_url + "&".join([f"{k}={v}" for k, v in export_params.items()])
-            export_response = requests.get(export_url)
-            if export_response.status_code == 200:
-                export_data = export_response.json()
-                return gpd.GeoDataFrame.from_features(export_data['features'])
-        return None
-
-    def download_files(self, urls, names):
-        console = Console()
-        with Progress() as progress:
-            total_files = len(urls)
-            for index, (url, name) in enumerate(zip(urls, names)):
-                self._download_file(url, name, progress, total_files, index)
-                console.log(f"Downloaded: {name}")
-
-    def _download_file(self, url, output_path, progress, total_files, index):
-        with requests.get(url, stream=True) as response:
-            response.raise_for_status()
-            total_size = int(response.headers.get('content-length', 0))
-            chunk_size = 8192
-            task = progress.add_task(f"Downloading {index + 1}/{total_files}: {os.path.basename(output_path)}", total=total_size)
-            with open(output_path, 'wb') as file:
-                for chunk in response.iter_content(chunk_size=chunk_size):
-                    file.write(chunk)
-                    progress.update(task, advance=len(chunk))
-                progress.update(task, completed=total_size)
-
+        print(f"Downloaded links for {len(gdf_lidar)} LiDAR tiles have been fetched successfully.")
+        return gdf_lidar
