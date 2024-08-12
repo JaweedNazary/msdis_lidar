@@ -1,6 +1,7 @@
 import requests
 import json
 import geopandas as gpd
+import pandas as pd
 from rich.progress import Progress, TextColumn, BarColumn
 from rich import print
 
@@ -96,7 +97,7 @@ class LidarDownloader:
 
                             # Append the new data to the existing GeoDataFrame
                             if not gdf_lidar.empty:
-                                gdf_lidar = gdf_lidar.append(new_data, ignore_index=True)
+                                gdf_lidar = pd.concat([gdf_lidar, new_data], ignore_index=True)
                             else:
                                 gdf_lidar = new_data
                 else:
