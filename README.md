@@ -12,4 +12,4 @@ A Python package to download and visualize LiDAR data from Missouri Spatial Data
 You can install the package using pip:
 
 ```bash
-pip install msdis-lidar
+pip install msdis_lidar
